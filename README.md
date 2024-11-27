@@ -6,5 +6,5 @@
   3. Колосов Егор
   4. Губенко Константин
 
-## Ссылка на письменную часть проекта Google Docs:
+## Ссылка на диск с работой:
 https://drive.google.com/drive/folders/18ikEesKovuk9VrHKPvcD9EFxDKzmf01e?usp=sharing
