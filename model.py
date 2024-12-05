@@ -3,18 +3,15 @@ import matplotlib.pyplot as plt
 from scipy import integrate
 from scipy import constants
 
-
 # Данные с Кербина
 m0 = 10000
-M = m0 + 24000  # масса с топливом
+M = m0 + 24000
 Ft = 1609220
 Cf = 0.2
 ro = 1.225
 S = 18.4
 g = 1.00034 * constants.g
-k = (M - m0) / (3 * 60 + 90)  # скорость расхода топлива (через 3 мин 30 c отсоединилась последняя ступень)
-
-#940 43 сек
+k = (M - m0) / (3 * 60 + 90)
 
 def A(t):
     return (Ft / (M - k * t))
@@ -32,8 +29,7 @@ def dv_dt(t, v):
 v0 = 0
 
 # Время интеграции
-t = np.linspace(0, 45, 50
-                )
+t = np.linspace(0, 45, 50)
 
 # Решение уравнения
 solve = integrate.solve_ivp(dv_dt, t_span=(0, max(t)), y0=[v0], t_eval=t)
