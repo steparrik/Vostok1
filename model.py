@@ -1,51 +1,44 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy import integrate
-from scipy import constants
+from scipy.integrate import solve_ivp
+from scipy.constants import g
 
 # Данные с Кербина
 m0 = 10000
 M = m0 + 24000
-Ft = 1609220
-Cf = 0.2
-ro = 1.225
-S = 18.4
-g = 1.00034 * constants.g
-k = (M - m0) / (3 * 60 + 90)
+Ft = 1609220  # тяга
+Cf = 0.2  # коэффициент лобового сопротивления
+ro = 1.225  # плотность воздуха (кг/м^3)
+S = 18.4  # площадь поперечного сечения (м^2)
+g = 1.00034 * g  # ускорение свободного падения (м/с^2)
+k = (M - m0) / (3 * 60 + 90)  # скорость изменения массы
 
-def A(t):
-    return (Ft / (M - k * t))
+def mass(t):
+    return M - k * t
 
+def du_dt(t, u):
+    m_t = mass(t)
+    return (
+        -g
+        - (Cf * (ro * u**2) * S) / (2 * m_t)
+        + Ft / m_t
+    )
 
-def B(t):
-    return ((Cf * ro * S) / (2 * (M - k * t)))
+time_span = (0, 45)
+time_eval = np.linspace(time_span[0], time_span[1], 500)
 
+# Начальные условия
+u0 = 0  # начальная скорость
 
-def dv_dt(t, v):
-    return (A(t) - B(t) * v ** 2 - g)
-
-
-# Начальная скорость
-v0 = 0
-
-# Время интеграции
-t = np.linspace(0, 45, 50)
-
-# Решение уравнения
-solve = integrate.solve_ivp(dv_dt, t_span=(0, max(t)), y0=[v0], t_eval=t)
-
-# Данные для построения графика
-x = solve.t
-y = solve.y[0]
+# Решение задачи
+solution = solve_ivp(du_dt, time_span, [u0], t_eval=time_eval, method="RK45")
 
 # Построение графика
 plt.figure(figsize=(10, 6))
-plt.plot(x, y, color="royalblue", linestyle="--", linewidth=2, label="Скорость ракеты v(t)")
-plt.title("Зависимость скорости от времени (Данные с Кербина)", fontsize=14, fontweight="bold")
-plt.xlabel("Время, с", fontsize=12)
-plt.ylabel("Скорость, м/с", fontsize=12)
-plt.legend(loc="best", fontsize=10)
-plt.grid(True, linestyle="--", alpha=0.7)
-plt.xticks(fontsize=10)
-plt.yticks(fontsize=10)
+plt.plot(solution.t, solution.y[0], label="Скорость", color="blue")
+plt.title("График скорости от времени")
+plt.xlabel("Время (с)")
+plt.ylabel("Скорость (м/с)")
+plt.grid()
+plt.legend()
 plt.show()
